@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dog Head Lake Farms | I Guess We're Doing This</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue: '#1b61b0',
+              darkblue: '#134885',
+              navy: '#0d325e',
+              light: '#f0f5fa',
+              accent: '#38bdf8',
+              sand: '#fdfbf7',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['Georgia', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- React & ReactDOM & Babel -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    .animate-float {
+      animation: float 4s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-[#fdfbf7] text-slate-800 font-sans antialiased selection:bg-[#1b61b0] selection:text-white">
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const CROPS_AND_FOOD = [
+      {
+        id: 'heirloom-tomatoes',
+        name: 'Sun-Drenched Heirloom Tomatoes',
+        category: 'Produce',
+        description: 'Cherokee Purple, Brandywine, and Green Zebra varieties grown in the rich bottomland soil along the lake edge.',
+        image: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=1000&q=80',
+        harvestSeason: 'Summer – Early Fall',
+        culinaryUse: 'Fresh caprese salads, wood-fired pizzas, and slow-simmered family marinara sauce.',
+        funFact: 'Legend has it these tomatoes taste 40% sweeter when consumed while watching the sunset over Dog Head Cove.'
+      },
+      {
+        id: 'muscadine-grapes',
+        name: 'Native Muscadine & Scuppernong Grapes',
+        category: 'Fruits & Vines',
+        description: 'Thriving on the sun-baked trellises overlooking the south pasture. Thick-skinned, intensely sweet, and fiercely resilient.',
+        image: 'https://images.unsplash.com/photo-1537640538966-79f365141fbe?auto=format&fit=crop&w=1000&q=80',
+        harvestSeason: 'Late Summer – September',
+        culinaryUse: 'Hand-picked snacking off the vine, homemade preserves, and experimental family estate wine.',
+        funFact: 'Requires zero coddling and outlasts every freeze.'
+      },
+      {
+        id: 'sweet-corn',
+        name: 'Silver Queen Sweet Corn',
+        category: 'Staples',
+        description: 'Planted in disciplined rows in the central delta field. Picked at dawn for maximum sugar conversion.',
+        image: 'https://images.unsplash.com/photo-1551754655-cd97e64d2787?auto=format&fit=crop&w=1000&q=80',
+        harvestSeason: 'Mid Summer',
+        culinaryUse: 'Boiled with plenty of butter, grilled in husks, and summer corn chowder.',
+        funFact: 'Harvest races against the raccoons, who are notoriously sophisticated corn connoisseurs.'
+      },
+      {
+        id: 'southern-peaches',
+        name: 'Georgia Belle & Elberta Peaches',
+        category: 'Orchard',
+        description: 'Our fledgling orchard on the eastern slope catching the morning breeze off Dog Head Lake.',
+        image: 'https://images.unsplash.com/photo-1595855759920-86582396756a?auto=format&fit=crop&w=1000&q=80',
+        harvestSeason: 'July – August',
+        culinaryUse: 'Fresh cobblers baked in cast-iron dutch ovens, grilled peach halves with honey.',
+        funFact: 'Planted by Uncle Marcus in a moment of extreme optimism after three glasses of sweet tea.'
+      },
+      {
+        id: 'blackberry-patch',
+        name: 'Wild Thornless Blackberries',
+        category: 'Berries',
+        description: 'Cascading along the old fence line near the north timber boundary. Thorny past, thornless present.',
+        image: 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=1000&q=80',
+        harvestSeason: 'June – July',
+        culinaryUse: 'Pancakes on Sunday morning, cobblers, and artisanal jams.',
+        funFact: 'Requires wearing long sleeves in 95-degree humidity. Character building.'
+      },
+      {
+        id: 'apiary-honey',
+        name: 'Dog Head Lake Wildflower Honey',
+        category: 'Apiary',
+        description: 'Produced by our resident Italian honeybees foraging on clover, tulip poplar, and goldenrod across the 67 acres.',
+        image: 'https://images.unsplash.com/photo-1587049352847-4a222e784d38?auto=format&fit=crop&w=1000&q=80',
+        harvestSeason: 'Spring & Fall',
+        culinaryUse: 'Drizzled over cornbread, morning tea, and curing holiday ham.',
+        funFact: 'The bees have unobstructed waterfront views and higher property value than most of us.'
+      },
+      {
+        id: 'pasture-poultry',
+        name: 'Heritage Egg Layers & Pastured Poultry',
+        category: 'Livestock & Eggs',
+        description: 'Ameraucana, Rhode Island Red, and Barred Rock hens roaming the orchard on mobile chicken tractors.',
+        image: 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?auto=format&fit=crop&w=1000&q=80',
+        harvestSeason: 'Year-Round',
+        culinaryUse: 'Deep golden-yolked breakfast scrambles and weekend baking.',
+        funFact: 'Named after various eccentric family members who share their exact morning disposition.'
+      },
+      {
+        id: 'herb-garden',
+        name: 'Culinary Herb Spiral',
+        category: 'Herbs',
+        description: 'Rosemary, sage, thyme, oregano, and sweet basil flourishing right outside the main kitchen porch.',
+        image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=1000&q=80',
+        harvestSeason: 'Year-Round (Perennials) / Summer (Annuals)',
+        culinaryUse: 'Seasoning cast-iron steaks, compound butters, and infused olive oils.',
+        funFact: 'Within 15 paces of the grill. Optimal culinary ergonomics.'
+      }
+    ];
+
+    const COMPOUND_ZONES = [
+      {
+        id: 'zone-1',
+        name: 'The Main Lodge & Hearth',
+        coordinates: '34.2961° N, 88.8144° W',
+        description: 'The central gathering hub featuring an industrial commercial kitchen, massive stone fireplace, wrap-around screened porch, and family dining table that seats 24.',
+        status: 'Phase 1 - Under Construction / Foundation Poured',
+        image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=80'
+      },
+      {
+        id: 'zone-2',
+        name: 'The Dog Head Cove & Dock',
+        coordinates: '34.2972° N, 88.8155° W',
+        description: 'Private deep-water dock shaped like the "snout" of the lake. Perfect for bass fishing, paddleboarding, sunset gin & tonics, and impromptu cannonballs.',
+        status: 'Phase 1 - Completed & Operational',
+        image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80'
+      },
+      {
+        id: 'zone-3',
+        name: 'The Orchard & Berry Rows',
+        coordinates: '34.2950° N, 88.8120° W',
+        description: 'Three acres dedicated to stone fruits, apples, figs, and endless blackberry brambles equipped with automated drip irrigation.',
+        status: 'Phase 2 - Planting Season 2026',
+        image: 'https://images.unsplash.com/photo-1595855759920-86582396756a?auto=format&fit=crop&w=1000&q=80'
+      },
+      {
+        id: 'zone-4',
+        name: 'The Cabin Village (Cousins Quarters)',
+        coordinates: '34.2945° N, 88.8160° W',
+        description: 'A cluster of four modern timber-frame micro-cabins nestled in the pine grove, giving each family branch their own private sanctuary.',
+        status: 'Phase 3 - Architectural Blueprints Approved',
+        image: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1000&q=80'
+      },
+      {
+        id: 'zone-5',
+        name: 'The Fire Pit & Story Circle',
+        coordinates: '34.2965° N, 88.8150° W',
+        description: 'Amphitheater-style limestone fire ring overlooking the water. Dedicated s\'mores station, acoustic guitar racks, and stargazing benches.',
+        status: 'Operational',
+        image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1000&q=80'
+      }
+    ];
+
+    const TIMELINE_EVENTS = [
+      {
+        year: 'Spring 2024',
+        title: 'The Great Map Argument',
+        description: 'While looking at satellite maps on a Sunday afternoon, someone pointed at the weird peninsula shaped like a pug dog head and whispered: "We should buy that."'
+      },
+      {
+        year: 'Fall 2024',
+        title: 'Land Acquisition & Survey',
+        description: '67 acres of rolling timber, creek bottoms, and shoreline secured. The motto "I Guess We\'re Doing This" officially adopted.'
+      },
+      {
+        year: 'Spring 2025',
+        title: 'Clearing & Soil Testing',
+        description: 'Soil samples came back rich and loamy. First trial crops of heirloom tomatoes and muscadines planted with amateur enthusiasm.'
+      },
+      {
+        year: 'Current Era (2026)',
+        title: 'Main Lodge Groundbreaking & Dock Build',
+        description: 'Docks installed, deep well drilled, electric run, and the grand master plan finalized. Family compound construction in full swing.'
+      },
+      {
+        year: '2027 & Beyond',
+        title: 'The First Annual Family Reunion Harvest',
+        description: 'Projected completion of the cabin village and first massive communal feast using 100% property-grown ingredients.'
+      }
+    ];
+
+    const FAQS = [
+      {
+        question: 'Why is it called Dog Head Lake?',
+        answer: 'Look at the satellite map or the top of our logo! The lake inlet forms the exact silhouette of a dog head pointing eastward. Nature has a great sense of humor.'
+      },
+      {
+        question: 'What does "I Guess We\'re Doing This" mean?',
+        answer: 'It is our official family mantra for when sanity gives way to wild ambition. Whenever someone suggests buying 215 acres or building an underground wine cellar, someone else sighs and says this exact phrase.'
+      },
+      {
+        question: 'Can I reserve a cabin for the summer?',
+        answer: 'Cabin reservations are managed via the annual Family Slack channel spreadsheet tournament. May the odds be ever in your favor.'
+      },
+      {
+        question: 'Are pets allowed?',
+        answer: 'Obviously. It is literally called Dog Head Lake. Dogs outrank humans here.'
+      }
+    ];
+
+    function App() {
+      const [portalOpen, setPortalOpen] = useState(false);
+      const [selectedCategory, setSelectedCategory] = useState('All');
+      const [activeCrop, setActiveCrop] = useState(null);
+      const [activePin, setActivePin] = useState('dock');
+      const [faqOpen, setFaqOpen] = useState(0);
+      const [submitted, setSubmitted] = useState(false);
+      const [formData, setFormData] = useState({ name: '', branch: 'Cousins Branch North', dates: '', intent: '', notes: '' });
+
+      const categories = ['All', 'Produce', 'Fruits & Vines', 'Staples', 'Orchard', 'Berries', 'Apiary', 'Livestock & Eggs', 'Herbs'];
+      const filteredCrops = selectedCategory === 'All' ? CROPS_AND_FOOD : CROPS_AND_FOOD.filter(c => c.category === selectedCategory);
+
+      const pins = {
+        dock: { title: 'Dog Head Cove & Dock', coords: '34.2961° N, 88.8144° W', desc: 'The focal point of water activities. Deep water bass fishing, paddleboarding, and evening sunset gatherings.', image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80' },
+        orchard: { title: 'North Orchard & Berry Rows', coords: '34.2975° N, 88.8120° W', desc: 'Peach trees, muscadine vines, and thornless blackberry patches receiving maximum southern sun exposure.', image: 'https://images.unsplash.com/photo-1595855759920-86582396756a?auto=format&fit=crop&w=1000&q=80' },
+        lodge: { title: 'Main Lodge & Fire Hearth', coords: '34.2955° N, 88.8150° W', desc: 'Elevated ridge overlooking the water. The future epicenter of family dinners and storytelling.', image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=80' },
+        pasture: { title: 'South Pasture & Apiary', coords: '34.2940° N, 88.8135° W', desc: 'Rolling clover meadows housing our bee colonies and heritage chicken tractors.', image: 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?auto=format&fit=crop&w=1000&q=80' }
+      };
+
+      return (
+        <div className="min-h-screen bg-[#fdfbf7] text-slate-800">
+          
+          {/* NAVBAR */}
+          <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md shadow-sm py-4">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+              <a href="#" className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#1b61b0] flex items-center justify-center text-white font-black text-xl shadow-md">
+                  🐶
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-black tracking-wider uppercase text-lg leading-tight text-slate-900">Dog Head Lake</span>
+                  <span className="text-xs font-semibold tracking-widest text-[#1b61b0] uppercase">Farms • Est. 2024</span>
+                </div>
+              </a>
+              <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-700">
+                <a href="#about" className="hover:text-[#1b61b0] transition-colors">The Vision</a>
+                <a href="#land" className="hover:text-[#1b61b0] transition-colors">The Land & Map</a>
+                <a href="#crops" className="hover:text-[#1b61b0] transition-colors">Farm & Harvest</a>
+                <a href="#masterplan" className="hover:text-[#1b61b0] transition-colors">Master Plan</a>
+                <a href="#timeline" className="hover:text-[#1b61b0] transition-colors">Timeline</a>
+                <a href="#faq" className="hover:text-[#1b61b0] transition-colors">FAQ</a>
+              </nav>
+              <button
+                onClick={() => setPortalOpen(true)}
+                className="bg-[#1b61b0] hover:bg-[#134885] text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-md transition-all flex items-center gap-2"
+              >
+                <span>Family Portal</span>
+              </button>
+            </div>
+          </header>
+
+          {/* HERO */}
+          <section className="relative min-h-screen flex items-center justify-center bg-slate-900 text-white overflow-hidden pt-20">
+            <div className="absolute inset-0 z-0">
+              <img
+                src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=80"
+                alt="Dog Head Lake"
+                className="w-full h-full object-cover filter brightness-[0.45] scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-black/60" />
+            </div>
+
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center flex flex-col items-center">
+              
+              {/* Logo Replica Badge */}
+              <div className="mb-8 p-6 sm:p-8 bg-[#1b61b0]/95 backdrop-blur-md rounded-3xl border-4 border-white/20 shadow-2xl max-w-md w-full animate-float">
+                <div className="bg-white rounded-2xl p-4 mb-4 shadow-inner flex items-center justify-center">
+                  <svg viewBox="0 0 400 180" className="w-full h-auto max-h-40 text-[#1b61b0] fill-current">
+                    <path d="M 80 120 
+                             C 70 120, 60 115, 55 105
+                             C 50 95, 55 85, 65 80
+                             C 80 75, 100 80, 115 75
+                             C 130 70, 145 60, 165 55
+                             C 185 50, 205 55, 225 45
+                             C 245 35, 260 20, 275 25
+                             C 290 30, 295 45, 290 60
+                             C 285 75, 275 90, 280 110
+                             C 285 125, 270 135, 255 130
+                             C 240 125, 230 110, 220 105
+                             C 210 100, 200 115, 185 120
+                             C 170 125, 160 135, 145 135
+                             C 130 135, 120 120, 105 125
+                             C 95 128, 85 125, 80 120 Z" />
+                  </svg>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-black tracking-wider uppercase text-white">
+                  Dog Head Lake Farms
+                </h1>
+                <div className="my-2 h-0.5 bg-white/40 w-3/4 mx-auto" />
+                <p className="text-sky-200 font-bold tracking-widest uppercase text-xs sm:text-sm">
+                  I Guess We're Doing This
+                </p>
+              </div>
+
+              <p className="text-lg sm:text-2xl text-slate-200 max-w-3xl mb-10 font-serif italic leading-relaxed">
+                "A 67-acre future family compound where wildlife, sustainable farming, and ambitious family dreams collide around a suspiciously dog-shaped lake."
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
+                <a
+                  href="#crops"
+                  className="w-full sm:w-auto bg-[#1b61b0] hover:bg-[#134885] text-white font-bold px-8 py-4 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 text-base"
+                >
+                  <span>Explore Crops & Livestock</span>
+                </a>
+                <a
+                  href="https://www.google.com/maps/@34.2960715,-88.8143986,868m/data=!3m1!1e3?entry=ttu"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-semibold px-8 py-4 rounded-2xl border border-white/30 shadow-lg transition-all flex items-center justify-center gap-3 text-base"
+                >
+                  <span>View Live Google Map</span>
+                </a>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 max-w-4xl w-full">
+                <div className="bg-white/5 backdrop-blur-md p-4 rounded-2xl border border-white/10 text-center">
+                  <span className="block text-2xl sm:text-3xl font-black text-sky-400">67</span>
+                  <span className="text-xs uppercase tracking-wider text-slate-300 font-medium">Acres of Sanctuary</span>
+                </div>
+                <div className="bg-white/5 backdrop-blur-md p-4 rounded-2xl border border-white/10 text-center">
+                  <span className="block text-2xl sm:text-3xl font-black text-emerald-400">8+</span>
+                  <span className="text-xs uppercase tracking-wider text-slate-300 font-medium">Crops & Orchards</span>
+                </div>
+                <div className="bg-white/5 backdrop-blur-md p-4 rounded-2xl border border-white/10 text-center">
+                  <span className="block text-2xl sm:text-3xl font-black text-amber-400">1</span>
+                  <span className="text-xs uppercase tracking-wider text-slate-300 font-medium">Pug-Shaped Lake</span>
+                </div>
+                <div className="bg-white/5 backdrop-blur-md p-4 rounded-2xl border border-white/10 text-center">
+                  <span className="block text-2xl sm:text-3xl font-black text-indigo-400">100%</span>
+                  <span className="text-xs uppercase tracking-wider text-slate-300 font-medium">Family Ambition</span>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          {/* ABOUT / VISION */}
+          <section id="about" className="py-24 bg-[#fdfbf7]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-16">
+                <span className="bg-blue-100 text-[#1b61b0] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">
+                  The Origin Story
+                </span>
+                <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight mb-6">
+                  How a Joke Turned Into 67 Acres of Destiny
+                </h2>
+                <p className="text-lg text-slate-600 leading-relaxed font-serif">
+                  It started over group chat screenshots of satellite maps in Northern Mississippi. "Look at this lake," someone said. "It looks exactly like a dog's head pointing east." Six months later, deeds were signed, shovels were bought, and "I Guess We're Doing This" became our family crest.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 flex flex-col items-start">
+                  <div className="w-14 h-14 rounded-2xl bg-sky-100 text-[#1b61b0] flex items-center justify-center font-bold text-2xl mb-6">🗺️</div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-3">The Canine Cartography</h3>
+                  <p className="text-slate-600 leading-relaxed text-sm">
+                    The peninsula forms the snout, the deep inlet is the collar, and the main basin is the skull. You can't unsee it once you look at the satellite view. It practically demanded a farm compound.
+                  </p>
+                </div>
+                <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 flex flex-col items-start">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-2xl mb-6">🌾</div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-3">Living Off the Land</h3>
+                  <p className="text-slate-600 leading-relaxed text-sm">
+                    From heirloom tomatoes to muscadine arbors and apiary honey, Dog Head Lake Farms is dedicated to cultivating hyper-local produce, heritage poultry, and generational memories.
+                  </p>
+                </div>
+                <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 flex flex-col items-start">
+                  <div className="w-14 h-14 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-2xl mb-6">🏡</div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-3">The Family Compound</h3>
+                  <p className="text-slate-600 leading-relaxed text-sm">
+                    Designed as a multi-generational haven where cousins, grandparents, dogs, and guests can gather around the central hearth, fish off the dock, and watch the sun dip below the tree line.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* LAND & MAP */}
+          <section id="land" className="py-24 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col md:flex-row md:items-end justify-between mb-16">
+                <div>
+                  <span className="bg-blue-100 text-[#1b61b0] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">
+                    215 Acres of Sanctuary
+                  </span>
+                  <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
+                    The Land & Location
+                  </h2>
+                </div>
+                <div className="mt-6 md:mt-0">
+                  <a
+                    href="https://www.google.com/maps/@34.2960715,-88.8143986,868m/data=!3m1!1e3?entry=ttu"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-slate-900 hover:bg-[#1b61b0] text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg transition-all"
+                  >
+                    Open Official Google Maps View ↗
+                  </a>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center bg-[#f0f5fa] p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xl">
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold text-slate-900">Compound Sector Guide</h3>
+                  <p className="text-sm text-slate-600 mb-6">
+                    Click a sector below to inspect coordinates, topography, and future use across our 215-acre property.
+                  </p>
+                  <div className="space-y-3">
+                    {Object.entries(pins).map(([key, data]) => (
+                      <button
+                        key={key}
+                        onClick={() => setActivePin(key)}
+                        className={`w-full text-left p-4 rounded-2xl transition-all border ${activePin === key ? 'bg-[#1b61b0] text-white border-[#1b61b0] shadow-md' : 'bg-white text-slate-800 border-slate-200'}`}
+                      >
+                        <h4 className="font-bold text-sm">{data.title}</h4>
+                        <span className={`text-xs ${activePin === key ? 'text-sky-100' : 'text-slate-500'}`}>{data.coords}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="lg:col-span-2 relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
+                  <img
+                    src={pins[activePin].image}
+                    alt={pins[activePin].title}
+                    className="w-full h-80 sm:h-96 object-cover object-center"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent flex flex-col justify-end p-6 sm:p-8 text-white">
+                    <span className="bg-[#1b61b0] self-start px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+                      {pins[activePin].coords}
+                    </span>
+                    <h3 className="text-2xl font-black mb-2">{pins[activePin].title}</h3>
+                    <p className="text-slate-200 text-sm leading-relaxed max-w-xl">{pins[activePin].desc}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* CROPS & FOOD */}
+          <section id="crops" className="py-24 bg-[#f0f5fa]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-12">
+                <span className="bg-emerald-100 text-emerald-800 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">
+                  Grown at Dog Head Lake
+                </span>
+                <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight mb-4">
+                  Farm-to-Table Harvest
+                </h2>
+                <p className="text-lg text-slate-600 leading-relaxed font-serif">
+                  Every crop, vine, and orchard tree is hand-selected to thrive in our rich bottomland soil and fuel our multi-generational family feasts.
+                </p>
+              </div>
+
+              <div className="flex items-center justify-center flex-wrap gap-2 mb-12">
+                {categories.map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm ${selectedCategory === cat ? 'bg-[#1b61b0] text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'}`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {filteredCrops.map(crop => (
+                  <div
+                    key={crop.id}
+                    onClick={() => setActiveCrop(crop)}
+                    className="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-xl transition-all flex flex-col cursor-pointer group"
+                  >
+                    <div className="relative h-52 overflow-hidden">
+                      <img
+                        src={crop.image}
+                        alt={crop.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <span className="absolute top-3 left-3 bg-white/95 text-slate-900 px-3 py-1 rounded-full text-xs font-bold shadow-md">
+                        {crop.category}
+                      </span>
+                    </div>
+                    <div className="p-6 flex flex-col flex-grow justify-between">
+                      <div>
+                        <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-[#1b61b0] transition-colors">{crop.name}</h3>
+                        <p className="text-slate-600 text-xs sm:text-sm line-clamp-2 mb-4 leading-relaxed">{crop.description}</p>
+                      </div>
+                      <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-[#1b61b0]">
+                        <span>📅 {crop.harvestSeason}</span>
+                        <span>Details →</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* MASTER PLAN */}
+          <section id="masterplan" className="py-24 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-16">
+                <span className="bg-blue-100 text-[#1b61b0] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">
+                  Architectural Blueprint
+                </span>
+                <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight mb-4">
+                  Compound Master Plan
+                </h2>
+                <p className="text-lg text-slate-600 leading-relaxed font-serif">
+                  How 215 acres of raw Northern Mississippi wilderness is being thoughtfully transformed into the ultimate multi-generational family sanctuary.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {COMPOUND_ZONES.map((zone, idx) => (
+                  <div key={zone.id} className="bg-[#f0f5fa] rounded-3xl overflow-hidden shadow-xl border border-slate-200 flex flex-col">
+                    <div className="relative h-56">
+                      <img src={zone.image} alt={zone.name} className="w-full h-full object-cover" />
+                      <span className="absolute top-3 right-3 bg-slate-900/80 text-white px-3 py-1 rounded-full text-xs font-bold">
+                        Zone 0{idx + 1}
+                      </span>
+                    </div>
+                    <div className="p-6 sm:p-8 flex flex-col flex-grow justify-between">
+                      <div>
+                        <div className="text-xs font-bold text-[#1b61b0] mb-2">📍 {zone.coordinates}</div>
+                        <h3 className="text-xl font-bold text-slate-900 mb-3">{zone.name}</h3>
+                        <p className="text-slate-600 text-sm leading-relaxed mb-6">{zone.description}</p>
+                      </div>
+                      <div className="pt-4 border-t border-slate-200/60 text-xs font-bold text-slate-700">
+                        ⏳ {zone.status}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* TIMELINE */}
+          <section id="timeline" className="py-24 bg-[#f0f5fa]">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-16">
+                <span className="bg-blue-100 text-[#1b61b0] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">
+                  Evolution of Ambition
+                </span>
+                <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight mb-4">
+                  Our Journey So Far
+                </h2>
+              </div>
+
+              <div className="relative border-l-2 border-[#1b61b0]/30 ml-4 sm:ml-32 space-y-12">
+                {TIMELINE_EVENTS.map((event, idx) => (
+                  <div key={idx} className="relative pl-8 sm:pl-12">
+                    <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-[#1b61b0] border-4 border-white shadow-md" />
+                    <div className="hidden sm:block absolute -left-32 top-0 w-24 text-right font-black text-[#1b61b0] text-sm uppercase tracking-wider">
+                      {event.year}
+                    </div>
+                    <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-lg border border-slate-200">
+                      <span className="sm:hidden inline-block bg-blue-100 text-[#1b61b0] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+                        {event.year}
+                      </span>
+                      <h3 className="text-xl font-bold text-slate-900 mb-2">{event.title}</h3>
+                      <p className="text-slate-600 text-sm sm:text-base leading-relaxed">{event.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* FAQ */}
+          <section id="faq" className="py-24 bg-white">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-16">
+                <span className="bg-blue-100 text-[#1b61b0] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">
+                  Questions & Answers
+                </span>
+                <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight mb-4">
+                  Frequently Asked Questions
+                </h2>
+              </div>
+
+              <div className="space-y-4">
+                {FAQS.map((faq, idx) => {
+                  const isOpen = faqOpen === idx;
+                  return (
+                    <div key={idx} className="bg-[#f0f5fa] rounded-2xl border border-slate-200 overflow-hidden">
+                      <button
+                        onClick={() => setFaqOpen(isOpen ? null : idx)}
+                        className="w-full text-left p-6 font-bold text-slate-900 flex items-center justify-between gap-4"
+                      >
+                        <span className="text-base sm:text-lg">{faq.question}</span>
+                        <span className="text-xl font-bold">{isOpen ? '−' : '+'}</span>
+                      </button>
+                      {isOpen && (
+                        <div className="px-6 pb-6 pt-2 text-slate-600 text-sm sm:text-base leading-relaxed border-t border-slate-200 bg-white">
+                          {faq.answer}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+
+          {/* FOOTER */}
+          <footer className="bg-slate-950 text-white py-16 border-t border-slate-800">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+              <div className="md:col-span-2 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#1b61b0] flex items-center justify-center text-white font-black text-xl">🐶</div>
+                  <span className="font-black tracking-wider uppercase text-xl">Dog Head Lake Farms</span>
+                </div>
+                <p className="text-slate-400 text-sm max-w-sm leading-relaxed font-serif">
+                  A 215-acre future family compound and sustainable farm sanctuary in Northern Mississippi. Where sanity meets ambition.
+                </p>
+                <div className="text-sky-400 font-bold tracking-widest uppercase text-xs">
+                  "I Guess We're Doing This"
+                </div>
+              </div>
+              <div className="space-y-3">
+                <h4 className="font-bold text-sm uppercase tracking-wider text-slate-300">Quick Navigation</h4>
+                <ul className="space-y-2 text-sm text-slate-400">
+                  <li><a href="#about" className="hover:text-white">The Vision</a></li>
+                  <li><a href="#land" className="hover:text-white">Land & Map</a></li>
+                  <li><a href="#crops" className="hover:text-white">Farm & Harvest</a></li>
+                  <li><a href="#masterplan" className="hover:text-white">Master Plan</a></li>
+                  <li><a href="#timeline" className="hover:text-white">Timeline</a></li>
+                </ul>
+              </div>
+              <div className="space-y-3">
+                <h4 className="font-bold text-sm uppercase tracking-wider text-slate-300">Location</h4>
+                <p className="text-sm text-slate-400">Northern Mississippi (Dog Head Cove)</p>
+                <p className="text-sm text-slate-400">Lat/Long: 34.2960° N, 88.8143° W</p>
+                <a href="https://www.google.com/maps/@34.2960715,-88.8143986,868m/data=!3m1!1e3" target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-sky-400 hover:underline block pt-2">
+                  View on Google Maps ↗
+                </a>
+              </div>
+            </div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-slate-900 text-xs text-slate-500 text-center sm:text-left">
+              © {new Date().getFullYear()} Dog Head Lake Farms. All rights reserved. Built with ambition and plenty of sweet tea.
+            </div>
+          </footer>
+
+          {/* CROP MODAL */}
+          {activeCrop && (
+            <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl relative">
+                <button
+                  onClick={() => setActiveCrop(null)}
+                  className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 text-white hover:bg-black flex items-center justify-center"
+                >
+                  ✕
+                </button>
+                <div className="relative h-64 sm:h-72">
+                  <img src={activeCrop.image} alt={activeCrop.name} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end p-6">
+                    <div>
+                      <span className="bg-[#1b61b0] text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2 inline-block">
+                        {activeCrop.category}
+                      </span>
+                      <h3 className="text-2xl sm:text-3xl font-black text-white">{activeCrop.name}</h3>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-6 sm:p-8 space-y-6">
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">About This Crop</h4>
+                    <p className="text-slate-700 text-base leading-relaxed">{activeCrop.description}</p>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="bg-[#f0f5fa] p-4 rounded-2xl border border-slate-200">
+                      <span className="text-[#1b61b0] font-bold text-sm block mb-1">📅 Harvest Season</span>
+                      <p className="text-slate-700 text-sm font-medium">{activeCrop.harvestSeason}</p>
+                    </div>
+                    <div className="bg-[#f0f5fa] p-4 rounded-2xl border border-slate-200">
+                      <span className="text-emerald-700 font-bold text-sm block mb-1">🍽️ Culinary Use</span>
+                      <p className="text-slate-700 text-sm font-medium">{activeCrop.culinaryUse}</p>
+                    </div>
+                  </div>
+                  <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl">
+                    <h5 className="font-bold text-amber-900 text-xs uppercase tracking-wider mb-1">Compound Lore</h5>
+                    <p className="text-amber-800 text-sm italic">{activeCrop.funFact}</p>
+                  </div>
+                  <div className="flex justify-end pt-2">
+                    <button
+                      onClick={() => setActiveCrop(null)}
+                      className="bg-slate-900 hover:bg-[#1b61b0] text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* FAMILY PORTAL MODAL */}
+          {portalOpen && (
+            <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl relative">
+                <button
+                  onClick={() => setPortalOpen(false)}
+                  className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center justify-center"
+                >
+                  ✕
+                </button>
+                <div className="bg-[#1b61b0] p-6 sm:p-8 text-white">
+                  <div className="w-12 h-12 rounded-2xl bg-white/25 flex items-center justify-center text-2xl mb-4">🐶</div>
+                  <h3 className="text-2xl font-black">Family & Guest Portal</h3>
+                  <p className="text-sky-100 text-sm mt-1">Coordinate visits, claim cabin bunks, and pitch new farm projects.</p>
+                </div>
+                <div className="p-6 sm:p-8">
+                  {submitted ? (
+                    <div className="text-center py-8 space-y-4">
+                      <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl font-bold">✓</div>
+                      <h4 className="text-2xl font-black text-slate-900">Request Logged!</h4>
+                      <p className="text-slate-600 text-sm max-w-sm mx-auto">
+                        Your compound access request has been sent to the family council and recorded in the great spreadsheet. See you at the dock!
+                      </p>
+                      <button
+                        onClick={() => { setSubmitted(false); setPortalOpen(false); }}
+                        className="bg-[#1b61b0] text-white font-bold px-8 py-3 rounded-xl text-sm transition-colors mt-4"
+                      >
+                        Return to Website
+                      </button>
+                    </div>
+                  ) : (
+                    <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Your Name</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. Aunt Sarah & Uncle Dave"
+                          value={formData.name}
+                          onChange={e => setFormData({...formData, name: e.target.value})}
+                          className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1b61b0] text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Family Branch / Affiliation</label>
+                        <select
+                          value={formData.branch}
+                          onChange={e => setFormData({...formData, branch: e.target.value})}
+                          className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1b61b0] text-sm bg-white"
+                        >
+                          <option>Cousins Branch North</option>
+                          <option>The Founders (Mom & Dad)</option>
+                          <option>West Coast Outpost</option>
+                          <option>Honorary Dog Enthusiast / Guest</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Proposed Dates</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. July 4th Weekend 2026"
+                          value={formData.dates}
+                          onChange={e => setFormData({...formData, dates: e.target.value})}
+                          className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1b61b0] text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Primary Mission</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. Tomato harvesting, bass fishing, deck lounging"
+                          value={formData.intent}
+                          onChange={e => setFormData({...formData, intent: e.target.value})}
+                          className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1b61b0] text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Special Notes / Dog Snack Requests</label>
+                        <textarea
+                          rows="3"
+                          placeholder="Bring extra bug spray and dog treats..."
+                          value={formData.notes}
+                          onChange={e => setFormData({...formData, notes: e.target.value})}
+                          className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1b61b0] text-sm resize-none"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="w-full bg-[#1b61b0] hover:bg-[#134885] text-white font-bold py-3.5 rounded-xl shadow-lg transition-colors text-sm mt-2"
+                      >
+                        Submit to Family Council
+                      </button>
+                    </form>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
