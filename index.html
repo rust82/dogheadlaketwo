@@ -617,44 +617,6 @@
               </a>
             </div>
           </section>
-          <section id="masterplan" className="py-24 bg-white">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center max-w-3xl mx-auto mb-16">
-                <span className="bg-blue-100 text-[#1b61b0] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">
-                  Architectural Blueprint
-                </span>
-                <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight mb-4">
-                  Compound Master Plan
-                </h2>
-                <p className="text-lg text-slate-600 leading-relaxed font-serif">
-                  How 67 acres of raw Northern Mississippi wilderness is being thoughtfully transformed into the ultimate multi-generational family sanctuary.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {COMPOUND_ZONES.map((zone, idx) => (
-                  <div key={zone.id} className="bg-[#f0f5fa] rounded-3xl overflow-hidden shadow-xl border border-slate-200 flex flex-col">
-                    <div className="relative h-56">
-                      <img src={zone.image} alt={zone.name} className="w-full h-full object-cover" />
-                      <span className="absolute top-3 right-3 bg-slate-900/80 text-white px-3 py-1 rounded-full text-xs font-bold">
-                        Zone 0{idx + 1}
-                      </span>
-                    </div>
-                    <div className="p-6 sm:p-8 flex flex-col flex-grow justify-between">
-                      <div>
-                        <div className="text-xs font-bold text-[#1b61b0] mb-2">📍 {zone.coordinates}</div>
-                        <h3 className="text-xl font-bold text-slate-900 mb-3">{zone.name}</h3>
-                        <p className="text-slate-600 text-sm leading-relaxed mb-6">{zone.description}</p>
-                      </div>
-                      <div className="pt-4 border-t border-slate-200/60 text-xs font-bold text-slate-700">
-                        ⏳ {zone.status}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
 
           {/* TIMELINE */}
           <section id="timeline" className="py-24 bg-[#f0f5fa]">
