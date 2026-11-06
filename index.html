@@ -290,7 +290,7 @@
 
           {/* HERO */}
           <section className="relative min-h-screen flex items-center justify-center bg-slate-900 text-white overflow-hidden pt-20">
-            {/* Background Video with Fallback Image */}
+            {/* Background Video using local assets/video */}
             <div className="absolute inset-0 z-0 overflow-hidden bg-slate-900">
               <video
                 autoPlay
@@ -300,8 +300,8 @@
                 poster="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=80"
                 className="w-full h-full object-cover filter brightness-[0.45] scale-105"
               >
-                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4" />
-                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+                <source src="assets/video/101495-video-720.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
               </video>
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-black/60" />
             </div>
