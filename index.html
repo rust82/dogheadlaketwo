@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dog Head Lake Farms | I Guess We're Doing This</title>
-  
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -48,6 +48,12 @@
     }
     .animate-float {
       animation: float 4s ease-in-out infinite;
+    }
+    .parallax-section {
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
     }
   </style>
 </head>
@@ -188,7 +194,7 @@
       {
         year: 'Spring 2024',
         title: 'The Great Map Argument',
-        description: 'While looking at satellite maps on a Sunday afternoon, someone pointed at the weird peninsula shaped like a pug dog head and whispered: "We should buy that."'
+        description: 'While looking at satellite maps on a Sunday afternoon, someone pointed at the weird peninsula shaped like a dog head and whispered: "We should buy that."'
       },
       {
         year: 'Fall 2024',
@@ -252,7 +258,7 @@
 
       return (
         <div className="min-h-screen bg-[#fdfbf7] text-slate-800">
-          
+
           {/* NAVBAR */}
           <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md shadow-sm py-4">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -284,22 +290,29 @@
 
           {/* HERO */}
           <section className="relative min-h-screen flex items-center justify-center bg-slate-900 text-white overflow-hidden pt-20">
-            <div className="absolute inset-0 z-0">
-              <img
-                src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=80"
-                alt="Dog Head Lake"
+            {/* Background Video with Fallback Image */}
+            <div className="absolute inset-0 z-0 overflow-hidden bg-slate-900">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                poster="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=80"
                 className="w-full h-full object-cover filter brightness-[0.45] scale-105"
-              />
+              >
+                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4" />
+                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+              </video>
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-black/60" />
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center flex flex-col items-center">
-              
+
               {/* Logo Replica Badge */}
               <div className="mb-8 p-6 sm:p-8 bg-[#1b61b0]/95 backdrop-blur-md rounded-3xl border-4 border-white/20 shadow-2xl max-w-md w-full animate-float">
                 <div className="bg-white rounded-2xl p-4 mb-4 shadow-inner flex items-center justify-center">
                   <svg viewBox="0 0 400 180" className="w-full h-auto max-h-40 text-[#1b61b0] fill-current">
-                    <path d="M 80 120 
+                    <path d="M 80 120
                              C 70 120, 60 115, 55 105
                              C 50 95, 55 85, 65 80
                              C 80 75, 100 80, 115 75
@@ -357,7 +370,7 @@
                 </div>
                 <div className="bg-white/5 backdrop-blur-md p-4 rounded-2xl border border-white/10 text-center">
                   <span className="block text-2xl sm:text-3xl font-black text-amber-400">1</span>
-                  <span className="text-xs uppercase tracking-wider text-slate-300 font-medium">Pug-Shaped Lake</span>
+                  <span className="text-xs uppercase tracking-wider text-slate-300 font-medium">Dog-Shaped Lake</span>
                 </div>
                 <div className="bg-white/5 backdrop-blur-md p-4 rounded-2xl border border-white/10 text-center">
                   <span className="block text-2xl sm:text-3xl font-black text-indigo-400">100%</span>
@@ -368,7 +381,20 @@
             </div>
           </section>
 
-          {/* ABOUT / VISION */}
+          {/* Parallax Background Banner */}
+          <section className="relative py-32 bg-slate-900 text-white parallax-section" style={{backgroundImage: `linear-gradient(rgba(13, 50, 94, 0.75), rgba(13, 50, 94, 0.75)), url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=80')`}}>
+            <div className="max-w-5xl mx-auto px-4 text-center">
+              <span className="bg-white/25 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block backdrop-blur-md">
+                Dog Head Lake Mantra
+              </span>
+              <h2 className="text-3xl sm:text-5xl font-black mb-6 tracking-tight font-serif italic">
+                "When sanity gives way to wild ambition, you buy 67 acres."
+              </h2>
+              <p className="text-sky-200 font-bold uppercase tracking-widest text-sm">
+                — Family Council Proverb #4
+              </p>
+            </div>
+          </section>
           <section id="about" className="py-24 bg-[#fdfbf7]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center max-w-3xl mx-auto mb-16">
@@ -415,7 +441,7 @@
               <div className="flex flex-col md:flex-row md:items-end justify-between mb-16">
                 <div>
                   <span className="bg-blue-100 text-[#1b61b0] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">
-                    215 Acres of Sanctuary
+                    67 Acres of Sanctuary
                   </span>
                   <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
                     The Land & Location
@@ -542,7 +568,66 @@
                   Compound Master Plan
                 </h2>
                 <p className="text-lg text-slate-600 leading-relaxed font-serif">
-                  How 215 acres of raw Northern Mississippi wilderness is being thoughtfully transformed into the ultimate multi-generational family sanctuary.
+                  How 67 acres of raw Northern Mississippi wilderness is being thoughtfully transformed into the ultimate multi-generational family sanctuary.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {COMPOUND_ZONES.map((zone, idx) => (
+                  <div key={zone.id} className="bg-[#f0f5fa] rounded-3xl overflow-hidden shadow-xl border border-slate-200 flex flex-col">
+                    <div className="relative h-56">
+                      <img src={zone.image} alt={zone.name} className="w-full h-full object-cover" />
+                      <span className="absolute top-3 right-3 bg-slate-900/80 text-white px-3 py-1 rounded-full text-xs font-bold">
+                        Zone 0{idx + 1}
+                      </span>
+                    </div>
+                    <div className="p-6 sm:p-8 flex flex-col flex-grow justify-between">
+                      <div>
+                        <div className="text-xs font-bold text-[#1b61b0] mb-2">📍 {zone.coordinates}</div>
+                        <h3 className="text-xl font-bold text-slate-900 mb-3">{zone.name}</h3>
+                        <p className="text-slate-600 text-sm leading-relaxed mb-6">{zone.description}</p>
+                      </div>
+                      <div className="pt-4 border-t border-slate-200/60 text-xs font-bold text-slate-700">
+                        ⏳ {zone.status}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* PARALLAX SECTION 2: Master Plan Callout */}
+          <section className="relative py-32 bg-slate-900 text-white parallax-section" style={{backgroundImage: `linear-gradient(rgba(19, 72, 133, 0.8), rgba(19, 72, 133, 0.8)), url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2000&q=80')`}}>
+            <div className="max-w-5xl mx-auto px-4 text-center">
+              <span className="bg-white/25 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block backdrop-blur-md">
+                Master Plan Progress
+              </span>
+              <h2 className="text-3xl sm:text-5xl font-black mb-6 tracking-tight font-serif italic">
+                "From raw timber to multi-generational memories."
+              </h2>
+              <p className="text-sky-200 font-bold uppercase tracking-widest text-sm mb-8">
+                Phase 1 Under Construction • Docks Operational • Cabins Planned
+              </p>
+              <a
+                href="#masterplan"
+                className="inline-block bg-white text-[#1b61b0] font-bold px-8 py-3.5 rounded-2xl shadow-xl hover:bg-slate-100 transition-all"
+              >
+                Inspect Master Plan ↗
+              </a>
+            </div>
+          </section>
+          <section id="masterplan" className="py-24 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-16">
+                <span className="bg-blue-100 text-[#1b61b0] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">
+                  Architectural Blueprint
+                </span>
+                <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight mb-4">
+                  Compound Master Plan
+                </h2>
+                <p className="text-lg text-slate-600 leading-relaxed font-serif">
+                  How 67 acres of raw Northern Mississippi wilderness is being thoughtfully transformed into the ultimate multi-generational family sanctuary.
                 </p>
               </div>
 
